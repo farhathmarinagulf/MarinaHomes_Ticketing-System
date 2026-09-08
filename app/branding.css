@@ -1,0 +1,8 @@
+/* Display the supplied wordmark without changing the original image. */
+.marina-brand { flex-direction:column; align-items:flex-start; gap:8px; width:180px; }
+.marina-brand .brand-mark { display:block; width:100%; aspect-ratio:2.5; flex-shrink:0; border-radius:3px; background-color:#000; background-image:url('/marina-wallpaper.png'); background-repeat:no-repeat; background-size:1000% auto; background-position:50% 55.2632%; }
+.marina-brand > small { display:block; font-size:8px; letter-spacing:2.7px; color:#71838c; margin:0; }
+.auth-story .marina-brand > small { color:#b5c4bd; }
+.mobile-auth-brand {display:none;}
+@media(max-width:1150px) { .sidebar .marina-brand {width:170px;} }
+@media(max-width:800px) { .sidebar .marina-brand {width:60px;gap:0;} .sidebar .marina-brand > .brand-mark {display:block;} .sidebar .marina-brand > small {display:none;} .mobile-auth-brand {display:block;margin-bottom:24px;} }

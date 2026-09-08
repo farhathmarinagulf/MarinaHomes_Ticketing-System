@@ -1,0 +1,51 @@
+@media (max-width: 520px) {
+  .table-scroll table,
+  .table-scroll tbody {
+    display: block;
+    white-space: normal;
+  }
+  .table-scroll thead {
+    display: none;
+  }
+  .table-scroll tr {
+    display: block;
+    padding: 16px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .table-scroll td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+    padding: 6px 0;
+    font-size: 12px;
+    gap: 12px;
+  }
+  .table-scroll td:first-child {
+    padding: 0 35px 12px 0;
+  }
+  .table-scroll td[data-label]::before {
+    content: attr(data-label);
+    font-size: 11px;
+    color: #71838c;
+  }
+  .table-scroll td:last-child {
+    position: absolute;
+    top: 16px;
+    right: 10px;
+    padding: 0;
+  }
+  .ticket-title {
+    max-width: none;
+  }
+  .ticket-title strong {
+    font-size: 13px;
+  }
+  .table-scroll td small {
+    margin: 0;
+  }
+  .badge {
+    font-size: 11px;
+  }
+}

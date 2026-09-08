@@ -1,0 +1,78 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: marina
+      POSTGRES_DB: marina
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U marina -d marina"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  migrate:
+    build:
+      context: .
+      target: builder
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGDATABASE: marina
+      PGUSER: marina
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    command: [npm, run, db:migrate]
+    depends_on:
+      db:
+        condition: service_healthy
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${APP_BIND_ADDRESS:-127.0.0.1}:3000:3000"
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGDATABASE: marina
+      PGUSER: marina
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      APP_URL: ${APP_URL:?Set APP_URL in .env}
+      REGISTRATION_CODE: ${REGISTRATION_CODE:?Set REGISTRATION_CODE in .env}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  adminer:
+    image: adminer:5
+    profiles: [tools]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    depends_on:
+      db:
+        condition: service_healthy
+  admin:
+    profiles: [tools]
+    build:
+      context: .
+      target: builder
+    environment:
+      PGHOST: db
+      PGPORT: "5432"
+      PGDATABASE: marina
+      PGUSER: marina
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrator}
+      ADMIN_EMPLOYEE_CODE: ${ADMIN_EMPLOYEE_CODE:-ADMIN}
+    command: [npm, run, admin:create]
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres_data:
