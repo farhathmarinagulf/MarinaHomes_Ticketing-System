@@ -13,7 +13,8 @@ PostgreSQL and count toward Neon's database storage quota.
    administrator is created. Do not add admin credentials to Netlify.
 4. Import `farhathmarinagulf/MarinaHomes_Ticketing-System` into Netlify, branch
    `main`, repository root. The committed netlify.toml selects Node 22,
-   `npm run build`, and `.next`. Netlify automatically installs its Next.js adapter.
+   `npm run build`, and `.next`. The configuration explicitly enables Netlify's
+   Next.js adapter to deploy server routes and APIs as well as static assets.
 5. In Netlify's environment settings, set these for the production deployment,
    including Functions scope where scope controls are available:
 
