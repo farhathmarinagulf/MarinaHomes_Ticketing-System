@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_PUBLIC_ATTACHMENT_LIMIT_MB = "4"
+
+# Next.js is detected automatically. Set DATABASE_URL, APP_URL,
+# REGISTRATION_CODE and COOKIE_SECURE in the Netlify dashboard.

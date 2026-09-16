@@ -18,6 +18,8 @@ Create the first administrator by setting `ADMIN_EMAIL`, `ADMIN_PASSWORD` (12+ c
 
 ## Docker server deployment
 
+For free cloud hosting, see [Netlify and Neon deployment](deploy/netlify-neon.md).
+
 1. Copy this project onto your server and copy `.env.example` to `.env`.
 2. Set a strong `POSTGRES_PASSWORD` using URL-safe letters/numbers, a private `REGISTRATION_CODE`, `APP_URL=https://helpdesk.your-domain.com`, and `COOKIE_SECURE=true`. Do not commit `.env`.
 3. Run `docker compose up -d --build`. PostgreSQL health checks and the migration must succeed before the app starts. Application traffic binds to server localhost port 3000; the database is not publicly exposed.

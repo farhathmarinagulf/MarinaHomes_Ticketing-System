@@ -4,6 +4,11 @@ import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { checkOrigin, failure, HttpError } from "@/lib/http";
 import { imageMime, ticketSchema } from "@/lib/validation";
+import {
+  attachmentLimitBytes,
+  imageLimitBytes,
+  uploadHelp,
+} from "@/lib/upload-limits";
 export async function GET(request: Request) {
   try {
     const user = await currentUser();
@@ -47,7 +52,10 @@ export async function POST(request: Request) {
     checkOrigin(request);
     const user = await currentUser();
     if (!user) throw new HttpError(401, "Please sign in.");
-    if (Number(request.headers.get("content-length")) > 17 * 1024 * 1024)
+    if (
+      Number(request.headers.get("content-length")) >
+      attachmentLimitBytes + 128 * 1024
+    )
       throw new HttpError(413, "Attachments are too large.");
     const form = await request.formData();
     const data = ticketSchema.parse(Object.fromEntries(form));
@@ -55,10 +63,13 @@ export async function POST(request: Request) {
       .getAll("images")
       .filter((f): f is File => f instanceof File && f.size > 0);
     if (files.length > 3) throw new HttpError(400, "Attach up to 3 images.");
+    if (
+      files.reduce((total, file) => total + file.size, 0) > attachmentLimitBytes
+    )
+      throw new HttpError(413, uploadHelp);
     const images = [];
     for (const file of files) {
-      if (file.size > 5 * 1024 * 1024)
-        throw new HttpError(400, "Each image must be 5 MB or smaller.");
+      if (file.size > imageLimitBytes) throw new HttpError(400, uploadHelp);
       const bytes = Buffer.from(await file.arrayBuffer());
       const mime = imageMime(bytes);
       if (!mime) throw new HttpError(400, "Use PNG, JPEG, or WebP images.");

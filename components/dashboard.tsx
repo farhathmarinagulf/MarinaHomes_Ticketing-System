@@ -1,5 +1,10 @@
 "use client";
 import Brand from "./brand";
+import {
+  attachmentLimitBytes,
+  imageLimitBytes,
+  uploadHelp,
+} from "@/lib/upload-limits";
 import { useCallback, useEffect, useState } from "react";
 import {
   ArrowDownLeft,
@@ -574,7 +579,7 @@ function CreateTicket({
         <label className="upload-label">
           <Paperclip size={22} />
           <strong>Attach supporting images</strong>
-          <span>PNG, JPEG or WebP · Up to 3 images · 5 MB each</span>
+          <span>PNG, JPEG or WebP · {uploadHelp}</span>
           <input
             name="images"
             type="file"
@@ -584,9 +589,11 @@ function CreateTicket({
               const items = Array.from(e.target.files ?? []);
               if (
                 items.length > 3 ||
-                items.some((f) => f.size > 5 * 1024 * 1024)
+                items.some((f) => f.size > imageLimitBytes) ||
+                items.reduce((total, file) => total + file.size, 0) >
+                  attachmentLimitBytes
               ) {
-                setError("Choose up to 3 images, each 5 MB or smaller.");
+                setError(uploadHelp);
                 e.target.value = "";
                 setFiles([]);
               } else {
